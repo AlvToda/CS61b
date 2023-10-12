@@ -1,7 +1,7 @@
 package deque;
 import org.junit.Test;
 import static org.junit.Assert.*;
-public class ArrayDeque<T>{
+public class ArrayDeque<T> implements Deque<T>{
     public T[] items;//the way of initialize is from 2.5
     public int size;
     public int nextFirst;
