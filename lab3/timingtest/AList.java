@@ -17,16 +17,18 @@ package timingtest;
 public class AList<Item> {
     private Item[] items;
     private int size;
+    private int capacity;
 
     /** Creates an empty list. */
     public AList() {
         items = (Item[]) new Object[100];
         size = 0;
+        capacity=100;
     }
 
     /** Resizes the underlying array to the target capacity. */
-    private void resize(int capacity) {
-        Item[] a = (Item[]) new Object[capacity];
+    private void resize(int cap) {
+        Item[] a = (Item[]) new Object[cap];
         System.arraycopy(items, 0, a, 0, size);
         items = a;
     }
@@ -34,7 +36,7 @@ public class AList<Item> {
     /** Inserts X into the back of the list. */
     public void addLast(Item x) {
         if (size == items.length) {
-            resize(size + 1);
+            resize(size*2);
         }
 
         items[size] = x;
