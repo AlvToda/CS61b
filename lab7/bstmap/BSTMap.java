@@ -163,10 +163,10 @@ public class BSTMap<K extends Comparable<K>, V> implements Map61B<K, V>{
     public Iterator<K> iterator() {
         throw new UnsupportedOperationException();
     }
-    private void printInOrder(){
+    public void printInOrder(){
         Helper_printInOrder(root);
     }
-    public void Helper_printInOrder(BST T){
+    private void Helper_printInOrder(BST T){
         if(T==null){
             return;
         }
