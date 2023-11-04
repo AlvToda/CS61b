@@ -48,7 +48,7 @@ SRCS := $(wildcard *.java)
 default: sentinel
 
 style: default
-	$(STYLEPROG) $(SRCS) 
+	$(STYLEPROG) $(SRCS)
 
 check:
 	$(RMAKE) -C .. PYTHON=$(PYTHON) check
