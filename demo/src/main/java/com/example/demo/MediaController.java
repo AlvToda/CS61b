@@ -4,19 +4,22 @@ import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ProgressBar;
+import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.shape.Circle;
 
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
@@ -27,13 +30,19 @@ public class MediaController implements Initializable {
     @FXML
     private Label NameLabel;
     @FXML
-    private Button NextButton,PlayButton,FastForwardButton,PauseButton,SelectFilesButton,RewindButton,StopButton,ResetButton;
+    private Button NextButton,PlayButton,FastForwardButton,PauseButton,SelectFilesButton,RewindButton,StopButton,ResetButton,PlayVideo,ChooseFilesButton;
     @FXML
     private Circle RotatingCircle;
     @FXML
     private AnchorPane PaneForCircle;
     @FXML
     private ProgressBar ProgressBar;
+    @FXML
+    private MenuButton PlayListShowButton;
+    @FXML
+    private ArrayList<MenuItem> SongMenu;
+   /* @FXML
+    private Slider VolumeController;*/
     private File directory;
     private File[] files;
     private ArrayList<File> playlist;
@@ -45,6 +54,23 @@ public class MediaController implements Initializable {
     private EmbeddedMediaPlayer MyPlayer;
     private MediaPlayerFactory mediaPlayerFactory;
     private RotateTransition rt;
+    private EventHandler<ActionEvent> event1 = new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e)
+        {
+            //cancleTiming();
+            isRunning=true;
+            BeginTiming();
+            NumberOfSongs= PlayListShowButton.getItems().indexOf((MenuItem)e.getSource());
+            NameLabel.setText(playlist.get(NumberOfSongs).getName());
+            MyPlayer.startMedia(playlist.get(NumberOfSongs).getAbsolutePath());
+
+            rt.play();  // 开始播放动画
+            /***
+            NumberOfSongs=SongMenu.indexOf((MenuItem)e.getSource());
+            NameLabel.setText(playlist.get(NumberOfSongs).getName());
+            MyPlayer.startMedia(playlist.get(NumberOfSongs).getAbsolutePath());***/
+        }
+    };
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -65,8 +91,13 @@ public class MediaController implements Initializable {
         isRunning=false;
         files=directory.listFiles();
         if(files!=null){
-            playlist.addAll(Arrays.asList(files));
-
+            for(File f:files){
+                playlist.add(f);
+                MenuItem m=new MenuItem(f.getName());
+                //SongMenu.add(m);
+                m.setOnAction(event1);
+                PlayListShowButton.getItems().add(m);
+            }
             String path=playlist.get(NumberOfSongs).toURI().getPath();
             path=path.substring(1);
             path=path.replace("/","\\");
@@ -82,6 +113,7 @@ public class MediaController implements Initializable {
 
             NameLabel.setText(playlist.get(NumberOfSongs).getName());
             //MyPlayer.startMedia(path);
+            //VolumeController.setValue(0.5);
         }
 
 
@@ -231,4 +263,31 @@ public class MediaController implements Initializable {
         //MyPlayer.play();
         //rt.play();  // 开始播放动画
     }
+
+    public void SwitchToPlayVideo(ActionEvent actionEvent) throws IOException {
+         MyPlayer.stop();
+         MyPlayer.setPosition(0);
+         //MyPlayer.release();
+
+         HelloApplication.CloseStage();
+         TestVideo.vedioPlay(null);
+    }
+
+    public void ChooseFilesMethod(ActionEvent actionEvent) {
+        FileChooser fileChooser = new FileChooser();
+        File f=fileChooser.showOpenDialog(HelloApplication.getStage());
+        if(f!=null){
+            MyPlayer.startMedia(f.getAbsolutePath());
+        }
+    }
+
+    public void ChangeProgress(MouseEvent mouseEvent) {
+        MyPlayer.setPosition((float)(mouseEvent.getX()/ProgressBar.getWidth()));
+    }
+    /**** volume control
+    public void ChangeVolume(MouseEvent mouseEvent) {
+        System.out.println(MyPlayer.getVolume());
+        MyPlayer.setVolume(200);
+        System.out.println(MyPlayer.getVolume());
+    }*************/
 }
