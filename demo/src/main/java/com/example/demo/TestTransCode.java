@@ -28,9 +28,6 @@ public class TestTransCode {
                 //encode
                 Encoder encoder = new Encoder();
                 encoder.encode(new MultimediaObject(source), target, attr);
-                System.out.println("Coverting is done.");
-
-
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -41,7 +38,7 @@ public class TestTransCode {
     }
     public static boolean isMP4(File f) {
 
-        return true;
+        return false;
     }
     public static void mp4_to_mov() {
         File source;
@@ -52,6 +49,7 @@ public class TestTransCode {
             System.out.println(source.getName());
             //只有这个文件是mp4才开始转换
             if (isMP4(source)) {
+                System.out.println("Converting"+source.getName()+"to"+source.getName()+"...");
                 //开启转换线程
                 ConversionThread conversionThread =new ConversionThread(source) ;
                 conversionThread.start();

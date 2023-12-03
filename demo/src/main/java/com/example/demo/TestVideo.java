@@ -40,8 +40,14 @@ public class TestVideo {
     static ActionListener l0= new ActionListener() {
         @Override
         public void actionPerformed(ActionEvent e) {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
             TestTransCode.mp4_to_mov();
+            });
+            conversionThread.start();
+
         }
+
     };
     /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
 
