@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.swing.*;
 
@@ -42,7 +43,28 @@ public class TestVideo {
         public void actionPerformed(ActionEvent e) {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
-            TestTransCode.mp4_to_mov();
+                try {
+                    MP4ToElse.mp4_to_mov();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+
+        }
+
+    };
+
+    static ActionListener l1= new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    MP4ToElse.mp4_to_avi();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             });
             conversionThread.start();
 
@@ -56,9 +78,10 @@ public class TestVideo {
             @Override
             public void run() {
                 /*************初始化TFMenu和ListenersForTF ************/
-                TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV"));
+                TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV","MP4转AVI"));
                 ListenersForTF=new ArrayList<>();
                 ListenersForTF.add(l0);
+                ListenersForTF.add(l1);
                 new TestVideo(args);
             }
         });
