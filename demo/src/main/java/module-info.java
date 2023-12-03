@@ -4,6 +4,7 @@ module com.example.demo {
     requires jna;
     requires vlcj;
     requires java.desktop;
+    requires jave.core;
 
 
     opens com.example.demo to javafx.fxml;

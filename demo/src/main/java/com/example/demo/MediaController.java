@@ -270,7 +270,7 @@ public class MediaController implements Initializable {
          //MyPlayer.release();
 
          HelloApplication.CloseStage();
-         TestVideo.vedioPlay(null);
+         TestVideo.videoPlay(null);
     }
 
     public void ChooseFilesMethod(ActionEvent actionEvent) {
@@ -278,6 +278,7 @@ public class MediaController implements Initializable {
         File f=fileChooser.showOpenDialog(HelloApplication.getStage());
         if(f!=null){
             MyPlayer.startMedia(f.getAbsolutePath());
+            System.out.println(MyPlayer.isPlaying());
         }
     }
 

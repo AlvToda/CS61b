@@ -33,10 +33,26 @@ public class TestVideo {
     private ArrayList<File> watchlist;
     private int NumberOfVideos;
 
-    public static void vedioPlay(String[] args) {
+    //以下两个变量带TF表示与格式转换有关系
+    private static ArrayList<String> TFMenu;
+    private static ArrayList<ActionListener> ListenersForTF=new ArrayList<>();
+    /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为 **********/
+    static ActionListener l0= new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            TestTransCode.mp4_to_mov();
+        }
+    };
+    /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
+
+    public static void videoPlay(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+                /*************初始化TFMenu和ListenersForTF ************/
+                TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV"));
+                ListenersForTF=new ArrayList<>();
+                ListenersForTF.add(l0);
                 new TestVideo(args);
             }
         });
@@ -47,7 +63,7 @@ public class TestVideo {
 
         //界面的显示
         jframe=new JFrame("Mul-player");
-        //jframe.setContentPane(component);
+
         jframe.setBounds(new Rectangle(250,150,800,600));
         jframe.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 
@@ -198,11 +214,20 @@ public class TestVideo {
 
         /***************** bind the button with the event **************************/
 
-        /*************** JMenu **************/
+        /*************** Set JMenu name **************/
         JMenuBar b=new JMenuBar();
         JMenu mn=new JMenu("播放列表");		//设置菜单名
+        JMenu tf=new JMenu("视频格式转换");
         b.add(mn);
+        b.add(tf);
+        /********** 处理视频格式转换的item ***************/
+        for(int i=0;i<TFMenu.size();i++){
+            JMenuItem TFitem =new JMenuItem(TFMenu.get(i));
+            TFitem.addActionListener(ListenersForTF.get(i));
+            tf.add(TFitem);
+        }
 
+        /********** 处理视频格式转换的item ***************/
         /**** show *****/
         jframe.setContentPane(contentPane);
         jframe.setVisible(true);
