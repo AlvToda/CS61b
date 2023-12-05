@@ -3,6 +3,7 @@ import ws.schild.jave.*;
 
 import javax.swing.*;
 import java.io.*;
+import java.util.Arrays;
 
 public class MP4ToElse {
     /*private static class ConversionThread extends Thread{
@@ -37,7 +38,10 @@ public class MP4ToElse {
 
 
     }*/
-    private static StringBuffer mp4FileHead=new StringBuffer("000000206674");
+    //以下为MP4文件头的几种形式
+    private static StringBuffer mp4FileHead0=new StringBuffer("000000206674");
+    private static StringBuffer mp4FileHead1=new StringBuffer("000000186674");
+    private static StringBuffer mp4FileHead2=new StringBuffer("0000001c6674");
     //检验文件真实类型是否为MP4
     public static boolean isMP4(File f) throws IOException {
         //用于读取文件
@@ -52,17 +56,18 @@ public class MP4ToElse {
             if(Integer.toHexString(tmp).length()==1){
                 fileHead.append(0);
             }
+            //System.out.println(Integer.toHexString(tmp));
             fileHead.append(Integer.toHexString(tmp));
         }
         //释放
         br.close();
         System.out.println(fileHead);
-        return fileHead.compareTo(mp4FileHead) == 0;
+        return fileHead.compareTo(mp4FileHead0) == 0 || fileHead.compareTo(mp4FileHead1) == 0 || fileHead.compareTo(mp4FileHead2) == 0;
 
     }
     public static void mp4_to_mov() throws IOException {
         File source,target;
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
         if (v == JFileChooser.APPROVE_OPTION) {
             source = chooser.getSelectedFile();
@@ -114,7 +119,7 @@ public class MP4ToElse {
 
     public static void mp4_to_avi() throws IOException {
         File source,target;
-        JFileChooser chooser = new JFileChooser();
+        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
         if (v == JFileChooser.APPROVE_OPTION) {
             source = chooser.getSelectedFile();
@@ -243,6 +248,51 @@ public class MP4ToElse {
             System.out.println("无法获取权限");
         }
 
+    }
+
+    public static void mp4_to_dvd() throws IOException {
+        File source, target;
+        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+        int v = chooser.showOpenDialog(null);
+        if (v == JFileChooser.APPROVE_OPTION) {
+            source = chooser.getSelectedFile();
+            target = new File(source.getAbsolutePath().substring(0, source.getAbsolutePath().indexOf(".")) + ".dvd");
+            //System.out.println(target.getName());
+            //System.out.println(source.getName());
+            //只有这个文件是mp4才开始转换
+            if (isMP4(source)) {
+                System.out.println("Converting \"" + source.getName() + "\" to \"" + target.getName() + "\"...");
+                try {
+                    //生成带有 MPEG 4/DivX 视频和 OGG Vorbis 音频的 AVI：
+                    AudioAttributes audio = new AudioAttributes();
+                    audio.setCodec("ac3");// 设置音频编解码器为 libvorbis
+                    System.out.println("audio");
+                    VideoAttributes video = new VideoAttributes();
+                    //video.setCodec("dvix");
+                    video.setCodec("mpeg2video");
+                    System.out.println("video");
+                    video.setBitRate(1280000);//设置比特率为1280 kb / s
+                    video.setFrameRate(30);
+                    EncodingAttributes attr = new EncodingAttributes();
+                    attr.setFormat("dvd");
+                    attr.setAudioAttributes(audio);
+                    attr.setVideoAttributes(video);
+                    //encode
+                    Encoder encoder = new Encoder();
+                    encoder.encode(new MultimediaObject(source), target, attr);
+
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                System.out.println("Done");
+            } else {
+                System.out.println("输入文件格式错误，请检查格式是否为mp4");
+            }
+
+        } else {
+            System.out.println("无法获取权限");
+        }
     }
 
 }

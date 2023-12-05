@@ -38,7 +38,7 @@ public class MediaController implements Initializable {
     @FXML
     private ProgressBar ProgressBar;
     @FXML
-    private MenuButton PlayListShowButton;
+    private MenuButton PlayListShowButton,AudioConvertButton;
     @FXML
     private ArrayList<MenuItem> SongMenu;
    /* @FXML

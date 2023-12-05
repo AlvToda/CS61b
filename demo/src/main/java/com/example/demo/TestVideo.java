@@ -103,19 +103,35 @@ public class TestVideo {
         }
 
     };
-    /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
+    static ActionListener l4= new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    MP4ToElse.mp4_to_dvd();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+
+        }
+    };
+        /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
 
     public static void videoPlay(String[] args) {
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
                 /*************初始化TFMenu和ListenersForTF ************/
-                TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV","MP4转AVI","MP4转ASF","MP4转FLV"));
+                TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV","MP4转AVI","MP4转ASF","MP4转FLV","MP4转DVD"));
                 ListenersForTF=new ArrayList<>();
                 ListenersForTF.add(l0);
                 ListenersForTF.add(l1);
                 ListenersForTF.add(l2);
                 ListenersForTF.add(l3);
+                ListenersForTF.add(l4);
                 new TestVideo(args);
             }
         });
@@ -256,7 +272,7 @@ public class TestVideo {
         selectFilesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JFileChooser chooser=new JFileChooser();
+                JFileChooser chooser=new JFileChooser(System.getProperty("user.dir"));
                 int v=chooser.showOpenDialog(null);
                 if(v==JFileChooser.APPROVE_OPTION){
                     File file=chooser.getSelectedFile();
