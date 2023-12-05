@@ -18,6 +18,8 @@ import javafx.util.Duration;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -62,8 +64,21 @@ public class MediaController implements Initializable {
             BeginTiming();
             NumberOfSongs= PlayListShowButton.getItems().indexOf((MenuItem)e.getSource());
             NameLabel.setText(playlist.get(NumberOfSongs).getName());
-            MyPlayer.startMedia(playlist.get(NumberOfSongs).getAbsolutePath());
-
+            if(playlist.get(NumberOfSongs).getName().length()>2&&playlist.get(NumberOfSongs).getName().substring(playlist.get(NumberOfSongs).getName().length()-3).equals("mid")){
+                isMidi=true;
+                try {
+                    midiPlayer=new MIDIPlayer(new File(playlist.get(NumberOfSongs).getAbsolutePath()));
+                    midiPlayer.midiplay();
+                } catch (InvalidMidiDataException ex) {
+                    throw new RuntimeException(ex);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                } catch (MidiUnavailableException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }else {
+                MyPlayer.startMedia(playlist.get(NumberOfSongs).getAbsolutePath());
+            }
             rt.play();  // 开始播放动画
             /***
             NumberOfSongs=SongMenu.indexOf((MenuItem)e.getSource());
@@ -71,6 +86,8 @@ public class MediaController implements Initializable {
             MyPlayer.startMedia(playlist.get(NumberOfSongs).getAbsolutePath());***/
         }
     };
+    private boolean isMidi;
+    private MIDIPlayer midiPlayer;
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
@@ -98,14 +115,24 @@ public class MediaController implements Initializable {
                 m.setOnAction(event1);
                 PlayListShowButton.getItems().add(m);
             }
-            String path=playlist.get(NumberOfSongs).toURI().getPath();
-            path=path.substring(1);
-            path=path.replace("/","\\");
+            String path=playlist.get(NumberOfSongs).getAbsolutePath();
             System.out.println(path);
+            isMidi=false;
+            //如果后缀名为mid的话，认为是midi文件，设置为true,并且new 一个midiplayer对象(检查后缀不使用contain)
+            if(path.substring(path.length()-3).equals("mid")){
+                isMidi=true;
+                try {
+                    midiPlayer=new MIDIPlayer(new File(playlist.get(NumberOfSongs).getAbsolutePath()));
+                } catch (InvalidMidiDataException e) {
+                    throw new RuntimeException(e);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                } catch (MidiUnavailableException e) {
+                    throw new RuntimeException(e);
+                }
+            }
 
-
-            MediaPlayerFactory mediaPlayerFactory =
-                    new MediaPlayerFactory();
+            MediaPlayerFactory mediaPlayerFactory = new MediaPlayerFactory();
             MyPlayer=mediaPlayerFactory.newEmbeddedMediaPlayer();
 
             MyPlayer.prepareMedia(path);
@@ -120,18 +147,27 @@ public class MediaController implements Initializable {
     }
 
     public void RewindMethod(ActionEvent actionEvent) {
-        float pos=MyPlayer.getPosition();
+        double pos;
+        if(isMidi){
+            pos=midiPlayer.getMidiPositon();
+        }else {
+            pos = MyPlayer.getPosition();
+        }
         pos-=0.025f;
         if(pos<0){
             pos=0;
         }
         //////////////////////////////////////test//////////////////////////////////////
         BeginTiming();
-        MyPlayer.setPosition(pos);
+        if(isMidi){
+            midiPlayer.setMidiPositon(pos);
+        }else{
+            MyPlayer.setPosition((float) pos);
+        }
     }
 
 
-    public void Play(ActionEvent actionEvent) {
+    public void Play(ActionEvent actionEvent) throws InvalidMidiDataException, MidiUnavailableException, IOException {
         if(!isRunning) {
             /*String path = playlist.get(NumberOfSongs).toURI().getPath();
             path = path.substring(1);
@@ -141,32 +177,50 @@ public class MediaController implements Initializable {
             //MyPlayer.startMedia(path);
             isRunning=true;
             BeginTiming();
-            MyPlayer.play();
+            //如果是midi文件则new 一个新的midiplayer对象，并调用方法播放
+            if (isMidi){
+                midiPlayer.midiplay();
+            }else{
+                MyPlayer.play();
+            }
             rt.play();  // 开始播放动画
 
         }
     }
 
     public void FastForwardMethod(ActionEvent actionEvent) {
-        float pos=MyPlayer.getPosition();
+        double pos;
+        if (isMidi){
+            pos=midiPlayer.getMidiPositon();
+        }else{
+            pos=MyPlayer.getPosition();
+        }
         pos+=0.025f;
         if(pos>1){
             pos=1;
         }
 
-        MyPlayer.setPosition(pos);
+        if(isMidi){
+            midiPlayer.setMidiPositon(pos);
+        }else{
+            MyPlayer.setPosition((float) pos);
+        }
     }
 
     public void PauseMethod(ActionEvent actionEvent) {
         if(isRunning) {
-            MyPlayer.pause();
+            if(isMidi){
+                midiPlayer.midiPause();
+            }else{
+                MyPlayer.pause();
+            }
             isRunning=false;
             //cancleTiming();
             rt.stop();
         }
     }
 
-    public void NextMethod(ActionEvent actionEvent) {
+    public void NextMethod(ActionEvent actionEvent) throws InvalidMidiDataException, MidiUnavailableException, IOException {
         if(NumberOfSongs<playlist.size()-1){
             NumberOfSongs+=1;
             MyPlayer.stop();
@@ -179,15 +233,14 @@ public class MediaController implements Initializable {
             }
 
 
-            String path=playlist.get(NumberOfSongs).toURI().getPath();
-            path=path.substring(1);
-            path=path.replace("/","\\");
-            System.out.println(path);
+            String path=playlist.get(NumberOfSongs).getAbsolutePath();
 
-            if(path.contains("mp4")){
-
+            if(path.length()>2&&path.substring(path.length()-3).equals("mid")){
+                isMidi=true;
+                midiPlayer=new MIDIPlayer(new File(path));
+            }else {
+                MyPlayer.prepareMedia(path);
             }
-            MyPlayer.prepareMedia(path);
             NameLabel.setText(playlist.get(NumberOfSongs).getName());
         }else{
             NumberOfSongs=0;
@@ -200,12 +253,14 @@ public class MediaController implements Initializable {
                 cancleTiming();
             }
 
-            String path=playlist.get(NumberOfSongs).toURI().getPath();
-            path=path.substring(1);
-            path=path.replace("/","\\");
-            System.out.println(path);
+            String path=playlist.get(NumberOfSongs).getAbsolutePath();
 
-            MyPlayer.prepareMedia(path);
+            if(path.length()>2&&path.substring(path.length()-3).equals("mid")){
+                isMidi=true;
+                midiPlayer=new MIDIPlayer(new File(path));
+            }else {
+                MyPlayer.prepareMedia(path);
+            }
             NameLabel.setText(playlist.get(NumberOfSongs).getName());
         }
     }
@@ -230,7 +285,12 @@ public class MediaController implements Initializable {
         time=new Timer();
         task=new TimerTask() {
             public void run() {
-                double pos=MyPlayer.getPosition();
+                double pos;
+                if (isMidi){
+                    pos= midiPlayer.getMidiPositon();
+                }else{
+                    pos=MyPlayer.getPosition();
+                }
                 System.out.println(pos);
                 if(pos>=0&&pos<1){
                     ProgressBar.setProgress(pos);
@@ -251,10 +311,12 @@ public class MediaController implements Initializable {
     }
 
     public void Reset(ActionEvent actionEvent) {
-        MyPlayer.setPosition(0);
-        String path = playlist.get(NumberOfSongs).toURI().getPath();
-        path = path.substring(1);
-        path = path.replace("/", "\\");
+        if(isMidi){
+            midiPlayer.setMidiPositon(0);
+        }else {
+            MyPlayer.setPosition(0);
+        }
+        String path = playlist.get(NumberOfSongs).getAbsolutePath();
         //System.out.println(path);
 
         MyPlayer.startMedia(path);
@@ -265,25 +327,49 @@ public class MediaController implements Initializable {
     }
 
     public void SwitchToPlayVideo(ActionEvent actionEvent) throws IOException {
-         MyPlayer.stop();
-         MyPlayer.setPosition(0);
+        isRunning=false;
+        if(isMidi){
+            midiPlayer.midiPause();
+        }else{
+            MyPlayer.pause();
+        }
+         /*MyPlayer.stop();
+         MyPlayer.setPosition(0);*/
          //MyPlayer.release();
 
          HelloApplication.CloseStage();
          TestVideo.videoPlay(null);
     }
 
-    public void ChooseFilesMethod(ActionEvent actionEvent) {
+    public void ChooseFilesMethod(ActionEvent actionEvent) throws InvalidMidiDataException, MidiUnavailableException, IOException {
         FileChooser fileChooser = new FileChooser();
         File f=fileChooser.showOpenDialog(HelloApplication.getStage());
         if(f!=null){
-            MyPlayer.startMedia(f.getAbsolutePath());
-            System.out.println(MyPlayer.isPlaying());
+            if(f.getName().substring(f.getName().length()-3).equals("mid")){
+                isMidi=true;
+                //先关掉原来的
+                midiPlayer.stopMIDI();
+                midiPlayer=new MIDIPlayer(new File(f.getAbsolutePath()));
+                midiPlayer.midiplay();
+            }else{
+                isMidi=false;
+                MyPlayer.startMedia(f.getAbsolutePath());
+            }
+            //标为isRunning
+            isRunning=true;
+            //切好文件之后开始计时，因为切换之后得到的pos是不正常的数值，会直接canceltiming，所以要重新开始计时才会有进度条显示
+            BeginTiming();
+            NameLabel.setText(f.getName());
+
         }
     }
 
     public void ChangeProgress(MouseEvent mouseEvent) {
-        MyPlayer.setPosition((float)(mouseEvent.getX()/ProgressBar.getWidth()));
+        if(isMidi){
+            midiPlayer.setMidiPositon((float)(mouseEvent.getX()/ProgressBar.getWidth()));
+        }else{
+            MyPlayer.setPosition((float)(mouseEvent.getX()/ProgressBar.getWidth()));
+        }
     }
     /**** volume control
     public void ChangeVolume(MouseEvent mouseEvent) {

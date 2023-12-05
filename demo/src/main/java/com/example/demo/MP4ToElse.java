@@ -174,7 +174,7 @@ public class MP4ToElse {
             if (isMP4(source)) {
                 System.out.println("Converting \"" + source.getName() + "\" to \"" + target.getName() + "\"...");
                 try {
-                    //生成带有 MPEG 4/DivX 视频和 OGG Vorbis 音频的 AVI：
+
                     AudioAttributes audio = new AudioAttributes();
                     audio.setCodec("aac");// 设置音频编解码器为 libvorbis
                     System.out.println("audio");
