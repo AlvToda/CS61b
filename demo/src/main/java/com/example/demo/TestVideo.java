@@ -71,6 +71,38 @@ public class TestVideo {
         }
 
     };
+    static ActionListener l2= new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    MP4ToElse.mp4_to_asf();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+
+        }
+
+    };
+    static ActionListener l3= new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    MP4ToElse.mp4_to_flv();
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+
+        }
+
+    };
     /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
 
     public static void videoPlay(String[] args) {
@@ -78,10 +110,12 @@ public class TestVideo {
             @Override
             public void run() {
                 /*************初始化TFMenu和ListenersForTF ************/
-                TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV","MP4转AVI"));
+                TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV","MP4转AVI","MP4转ASF","MP4转FLV"));
                 ListenersForTF=new ArrayList<>();
                 ListenersForTF.add(l0);
                 ListenersForTF.add(l1);
+                ListenersForTF.add(l2);
+                ListenersForTF.add(l3);
                 new TestVideo(args);
             }
         });
