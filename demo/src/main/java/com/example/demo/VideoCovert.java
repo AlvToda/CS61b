@@ -3,9 +3,8 @@ import ws.schild.jave.*;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.Arrays;
 
-public class MP4ToElse {
+public class VideoCovert {
     /*private static class ConversionThread extends Thread{
         private File source;
         private File target;
@@ -39,21 +38,22 @@ public class MP4ToElse {
 
     }*/
     //以下为MP4文件头的几种形式
-    private static StringBuffer mp4FileHead0=new StringBuffer("000000206674");
-    private static StringBuffer mp4FileHead1=new StringBuffer("000000186674");
-    private static StringBuffer mp4FileHead2=new StringBuffer("0000001c6674");
+    private static StringBuffer mp4FileHead0 = new StringBuffer("000000206674");
+    private static StringBuffer mp4FileHead1 = new StringBuffer("000000186674");
+    private static StringBuffer mp4FileHead2 = new StringBuffer("0000001c6674");
+
     //检验文件真实类型是否为MP4
     public static boolean isMP4(File f) throws IOException {
         //用于读取文件
-        FileReader reader=new FileReader(f);
-        BufferedReader br=new BufferedReader(reader);
+        FileReader reader = new FileReader(f);
+        BufferedReader br = new BufferedReader(reader);
         StringBuffer fileHead = new StringBuffer();
         //读取前六个字节并且将结果保存在fileHead中，与mp4FileHead作比较
-        for(int i=0;i<6;i++){
+        for (int i = 0; i < 6; i++) {
             //read会返回一个字节
-            int tmp=br.read();
+            int tmp = br.read();
             //如果在文件中读到的字节长度为1，即范围在0~F内的数字，那么要在它的前面加上0，这样才能最后凑成如
-            if(Integer.toHexString(tmp).length()==1){
+            if (Integer.toHexString(tmp).length() == 1) {
                 fileHead.append(0);
             }
             //System.out.println(Integer.toHexString(tmp));
@@ -65,18 +65,19 @@ public class MP4ToElse {
         return fileHead.compareTo(mp4FileHead0) == 0 || fileHead.compareTo(mp4FileHead1) == 0 || fileHead.compareTo(mp4FileHead2) == 0;
 
     }
-    public static void mp4_to_mov() throws IOException {
-        File source,target;
+
+    public static void To_mov() throws IOException {
+        File source, target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
         if (v == JFileChooser.APPROVE_OPTION) {
             source = chooser.getSelectedFile();
-            target = new File(source.getAbsolutePath().substring(0,source.getAbsolutePath().indexOf("."))+".mov") ;
+            target = new File(source.getAbsolutePath().substring(0, source.getAbsolutePath().indexOf(".")) + ".mov");
             //System.out.println(target.getName());
             //System.out.println(source.getName());
             //只有这个文件是mp4才开始转换
             if (isMP4(source)) {
-                System.out.println("Converting \""+source.getName()+"\" to \""+target.getName()+"\"...");
+                System.out.println("Converting \"" + source.getName() + "\" to \"" + target.getName() + "\"...");
                 try {
                     AudioAttributes audio = new AudioAttributes();
                     audio.setCodec("aac");// 设置音频编解码器为 AAC
@@ -106,7 +107,7 @@ public class MP4ToElse {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }*/
-            }else {
+            } else {
                 System.out.println("输入文件格式错误，请检查格式是否为mp4");
             }
 
@@ -117,18 +118,18 @@ public class MP4ToElse {
 
     }
 
-    public static void mp4_to_avi() throws IOException {
-        File source,target;
+    public static void To_avi() throws IOException {
+        File source, target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
         if (v == JFileChooser.APPROVE_OPTION) {
             source = chooser.getSelectedFile();
-            target = new File(source.getAbsolutePath().substring(0,source.getAbsolutePath().indexOf("."))+".avi") ;
+            target = new File(source.getAbsolutePath().substring(0, source.getAbsolutePath().indexOf(".")) + ".avi");
             //System.out.println(target.getName());
             //System.out.println(source.getName());
             //只有这个文件是mp4才开始转换
             if (isMP4(source)) {
-                System.out.println("Converting \""+source.getName()+"\" to \""+target.getName()+"\"...");
+                System.out.println("Converting \"" + source.getName() + "\" to \"" + target.getName() + "\"...");
                 try {
                     //生成带有 MPEG 4/DivX 视频和 OGG Vorbis 音频的 AVI：
                     AudioAttributes audio = new AudioAttributes();
@@ -151,7 +152,7 @@ public class MP4ToElse {
                     ex.printStackTrace();
                 }
                 System.out.println("Done");
-            }else {
+            } else {
                 System.out.println("输入文件格式错误，请检查格式是否为mp4");
             }
 
@@ -161,7 +162,7 @@ public class MP4ToElse {
 
     }
 
-    public static void mp4_to_asf() throws IOException {
+    public static void To_asf() throws IOException {
         File source, target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
@@ -205,18 +206,19 @@ public class MP4ToElse {
         }
 
     }
-    public static void mp4_to_flv() throws IOException {
-        File source,target;
-        JFileChooser chooser = new JFileChooser( System.getProperty("user.dir"));
+
+    public static void To_flv() throws IOException {
+        File source, target;
+        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
         if (v == JFileChooser.APPROVE_OPTION) {
             source = chooser.getSelectedFile();
-            target = new File(source.getAbsolutePath().substring(0,source.getAbsolutePath().indexOf("."))+".flv") ;
+            target = new File(source.getAbsolutePath().substring(0, source.getAbsolutePath().indexOf(".")) + ".flv");
             //System.out.println(target.getName());
             //System.out.println(source.getName());
             //只有这个文件是mp4才开始转换
             if (isMP4(source)) {
-                System.out.println("Converting \""+source.getName()+"\" to \""+target.getName()+"\"...");
+                System.out.println("Converting \"" + source.getName() + "\" to \"" + target.getName() + "\"...");
                 try {
                     //生成带有 MPEG 4/DivX 视频和 OGG Vorbis 音频的 AVI：
                     AudioAttributes audio = new AudioAttributes();
@@ -240,7 +242,7 @@ public class MP4ToElse {
                     ex.printStackTrace();
                 }
                 System.out.println("Done");
-            }else {
+            } else {
                 System.out.println("输入文件格式错误，请检查格式是否为mp4");
             }
 
@@ -250,7 +252,7 @@ public class MP4ToElse {
 
     }
 
-    public static void mp4_to_dvd() throws IOException {
+    public static void To_dvd() throws IOException {
         File source, target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
@@ -295,4 +297,52 @@ public class MP4ToElse {
         }
     }
 
+    public static void toMP4 () throws EncoderException {
+        File source, target;
+        JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
+        int v = chooser.showOpenDialog(null);
+        if (v == JFileChooser.APPROVE_OPTION) {
+            source = chooser.getSelectedFile();
+            target = new File(source.getAbsolutePath().substring(0, source.getAbsolutePath().indexOf(".")) + ".mp4");
+            //System.out.println(target.getName());
+            //System.out.println(source.getName());
+
+                System.out.println("Converting \"" + source.getName() + "\" to \"" + target.getName() + "\"...");
+                try {
+                    //生成带有 MPEG 4/DivX 视频和 OGG Vorbis 音频的 AVI：
+                    AudioAttributes audio = new AudioAttributes();
+                    audio.setCodec("aac");// 设置音频编解码器为 libvorbis
+                    System.out.println("audio");
+                    VideoAttributes video = new VideoAttributes();
+                    //video.setCodec("dvix");
+                    video.setCodec("h264");
+                    System.out.println("video");
+                    video.setBitRate(1280000);//设置比特率为1280 kb / s
+                    video.setFrameRate(30);
+                    EncodingAttributes attr = new EncodingAttributes();
+                    attr.setFormat("mp4");
+                    attr.setAudioAttributes(audio);
+                    attr.setVideoAttributes(video);
+                    //encode
+                    Encoder encoder = new Encoder();
+                    encoder.encode(new MultimediaObject(source), target, attr);
+
+
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                System.out.println("Done");
+            MultimediaObject m = new MultimediaObject(target);
+            System.out.println(target.getName()+":"+m.getInfo().toString());
+            System.out.println(target.getName()+":"+m.getInfo().getVideo().getDecoder());
+            System.out.println(target.getName()+":"+m.getInfo().getAudio().getDecoder());
+           } else {
+            System.out.println("无法获取权限");
+        }
+    }
+
+    public static void main(String[] args) throws EncoderException {
+         toMP4();
+
+    }
 }

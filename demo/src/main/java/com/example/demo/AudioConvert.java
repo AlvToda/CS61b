@@ -6,8 +6,6 @@ import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 
-import static com.example.demo.MP4ToElse.isMP4;
-
 public class AudioConvert {
 
     public static void FlacToWav() throws EncoderException {
@@ -195,7 +193,7 @@ public class AudioConvert {
             System.out.println("无法获取权限");
         }
     }
-    public static void main(String[] args) throws EncoderException, IOException {
+    public void ToAMR(){
         //不支持midi转au
         File source,target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
@@ -239,5 +237,10 @@ public class AudioConvert {
     }
 
 
+
+    public static void main(String[] args) throws EncoderException, IOException {
+
+
+    }
 }
 

@@ -2,7 +2,6 @@ package com.example.demo;
 
 
 import javafx.application.Platform;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
 
 import java.awt.*;
@@ -11,7 +10,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.*;
 
@@ -44,7 +42,7 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_mov();
+                    VideoCovert.To_mov();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -61,7 +59,7 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_avi();
+                    VideoCovert.To_avi();;
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -77,7 +75,7 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_asf();
+                    VideoCovert.To_asf();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -93,7 +91,7 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_flv();
+                    VideoCovert.To_flv();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -109,7 +107,7 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_dvd();
+                    VideoCovert.To_dvd();
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -120,7 +118,7 @@ public class TestVideo {
     };
         /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
 
-    public static void videoPlay(String[] args) {
+    public static void videoPlay() {
         // TODO: test
         /////////////// for study //////////
         Thread t=Thread.currentThread();
@@ -137,17 +135,14 @@ public class TestVideo {
                 ListenersForTF.add(l2);
                 ListenersForTF.add(l3);
                 ListenersForTF.add(l4);
-                new TestVideo(args);
+                new TestVideo();
             }
         });
 
     }
-    public TestVideo(String[] args){
+    public TestVideo(){
         //component=new EmbeddedMediaPlayerComponent();
         /////////////// for study //////////
-        Thread t=Thread.currentThread();
-        long id= t.threadId();
-        System.out.println("TestVideo:"+id);
         //界面的显示
         jframe=new JFrame("Mul-player");
 
@@ -295,6 +290,7 @@ public class TestVideo {
                  component.getMediaPlayer().stop();
                  jframe.setVisible(false);
                  //component.release();
+
                  SwitchLater();
             }
         });

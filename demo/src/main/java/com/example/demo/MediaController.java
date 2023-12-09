@@ -152,7 +152,7 @@ public class MediaController implements Initializable {
             MyPlayer.prepareMedia(path);
             //System.out.println(MyPlayer.getLength());//需要startmedia才可以获取真正的length
             //可以播放rtsp MyPlayer.startMedia("rtsp://127.0.0.1:8554/");
-
+            //MyPlayer.startMedia("http://127.0.0.1:8080/");
             /*AudioMediaPlayerComponent a=new AudioMediaPlayerComponent();
             a.getMediaPlayer().startMedia(path);*/
 
@@ -369,7 +369,9 @@ public class MediaController implements Initializable {
          //MyPlayer.release();
 
          HelloApplication.CloseStage();
-         TestVideo.videoPlay(null);
+
+         TestVideo.videoPlay();
+
     }
 
     public void ChooseFilesMethod(ActionEvent actionEvent) throws InvalidMidiDataException, MidiUnavailableException, IOException {
