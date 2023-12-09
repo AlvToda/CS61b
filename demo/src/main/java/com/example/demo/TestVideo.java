@@ -121,6 +121,11 @@ public class TestVideo {
         /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
 
     public static void videoPlay(String[] args) {
+        // TODO: test
+        /////////////// for study //////////
+        Thread t=Thread.currentThread();
+        long id= t.threadId();
+        System.out.println("videoPlay:"+id);
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -139,7 +144,10 @@ public class TestVideo {
     }
     public TestVideo(String[] args){
         //component=new EmbeddedMediaPlayerComponent();
-
+        /////////////// for study //////////
+        Thread t=Thread.currentThread();
+        long id= t.threadId();
+        System.out.println("TestVideo:"+id);
         //界面的显示
         jframe=new JFrame("Mul-player");
 
@@ -340,13 +348,12 @@ public class TestVideo {
             }
 
 
-            String path=watchlist.get(NumberOfVideos).toURI().getPath();
-            path=path.substring(1);
-            path=path.replace("/","\\");
+            String path=watchlist.get(NumberOfVideos).getAbsolutePath();
             System.out.println(path);
 
             component.getMediaPlayer().prepareMedia(path);
             component.getMediaPlayer().play();
+
         }
         jframe.setJMenuBar(b);
 
@@ -355,6 +362,10 @@ public class TestVideo {
         Platform.runLater(new Runnable() {
             @Override
             public void run() {
+                /////////////// for study //////////
+                Thread t=Thread.currentThread();
+                long id= t.threadId();
+                System.out.println("switch later:"+id);
                 //更新JavaFX的主线程的代码放在此处
                 try {
                     HelloApplication.ReloadStage();
