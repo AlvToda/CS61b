@@ -14,7 +14,7 @@ import java.util.Arrays;
 import javax.swing.*;
 
 public class TestVideo {
-    private final JFrame jframe;
+    private static  JFrame jframe;
 
     private static final EmbeddedMediaPlayerComponent component = new EmbeddedMediaPlayerComponent();
 
@@ -117,17 +117,31 @@ public class TestVideo {
         }
     };
         /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
-
+    private static boolean isinitialized=false;
     public static void videoPlay() {
         // TODO: test
         /////////////// for study //////////
         Thread t=Thread.currentThread();
         long id= t.threadId();
         System.out.println("videoPlay:"+id);
+         TFMenu=new ArrayList<>(Arrays.asList("转MOV","转AVI","转ASF","转FLV","转DVD"));
+         ListenersForTF=new ArrayList<>();
+         ListenersForTF.add(l0);
+         ListenersForTF.add(l1);
+         ListenersForTF.add(l2);
+         ListenersForTF.add(l3);
+         ListenersForTF.add(l4);
+         if(!isinitialized){
+             new TestVideo();
+             isinitialized=true;
+         }else{
+             jframe.setVisible(true);
+         }
+        /**
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
-                /*************初始化TFMenu和ListenersForTF ************/
+                /*************初始化TFMenu和ListenersForTF ***********
                 TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV","MP4转AVI","MP4转ASF","MP4转FLV","MP4转DVD"));
                 ListenersForTF=new ArrayList<>();
                 ListenersForTF.add(l0);
@@ -137,7 +151,7 @@ public class TestVideo {
                 ListenersForTF.add(l4);
                 new TestVideo();
             }
-        });
+        });*/
 
     }
     public TestVideo(){
@@ -275,6 +289,8 @@ public class TestVideo {
         selectFilesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Thread t=Thread.currentThread();
+                System.out.println(t.threadId()+":select actionPerformed");
                 JFileChooser chooser=new JFileChooser(System.getProperty("user.dir"));
                 int v=chooser.showOpenDialog(null);
                 if(v==JFileChooser.APPROVE_OPTION){
@@ -287,7 +303,9 @@ public class TestVideo {
         MusicPlayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                 component.getMediaPlayer().stop();
+                 Thread t=Thread.currentThread();
+                 System.out.println(t.threadId()+":switch actionPerformed");
+                 component.getMediaPlayer().pause();
                  jframe.setVisible(false);
                  //component.release();
 

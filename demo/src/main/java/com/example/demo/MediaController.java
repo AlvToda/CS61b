@@ -3,6 +3,7 @@ package com.example.demo;
 import javafx.animation.Animation;
 import javafx.animation.Interpolator;
 import javafx.animation.RotateTransition;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -10,11 +11,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
 import uk.co.caprica.vlcj.component.AudioMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
@@ -22,15 +25,19 @@ import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.*;
 import java.util.*;
 
+import static java.lang.Thread.currentThread;
 import static java.lang.Thread.sleep;
 
 
 public class MediaController implements Initializable {
-
+    @FXML
+    public VBox welcomeText;
     @FXML
     private Label NameLabel;
     @FXML
@@ -42,14 +49,16 @@ public class MediaController implements Initializable {
     @FXML
     private ProgressBar ProgressBar;
     @FXML
-    private MenuButton PlayListShowButton,AudioConvertButton;
+    private MenuButton PlayListShowButton;
+    @FXML
+    private MenuButton AudioConvertButton;
     @FXML
     private ArrayList<MenuItem> SongMenu;
    /* @FXML
     private Slider VolumeController;*/
-    private File directory;
-    private File[] files;
-    private ArrayList<File> playlist;
+    private static File directory;
+    private static File[] files;
+    private static ArrayList<File> playlist;
     private int NumberOfSongs;
     private Timer time;
     private TimerTask task;
@@ -121,6 +130,7 @@ public class MediaController implements Initializable {
         directory=new File( "music");
         isRunning=false;
         files=directory.listFiles();
+
         if(files!=null){
             for(File f:files){
                 playlist.add(f);
@@ -160,9 +170,83 @@ public class MediaController implements Initializable {
             //MyPlayer.startMedia(path);
             //VolumeController.setValue(0.5);
         }
-
-
+        listenDir.start();
     }
+
+    public void ChangePlayList() {
+        for(File f:files){
+            playlist.add(f);
+            MenuItem m=new MenuItem(f.getName());
+            //SongMenu.add(m);
+            m.setOnAction(event1);
+            PlayListShowButton.getItems().add(m);
+        }
+    }
+    //文件夹变化监听
+    public void AddListenerForMusic() throws IOException {
+        // 创建WatchService，它是对操作系统的文件监视器的封装，相对之前，不需要遍历文件目录，效率要高很多
+        WatchService watcher = FileSystems.getDefault().newWatchService();
+        // 注册指定目录使用的监听器，监视目录下文件的变化；
+        // PS：Path必须是目录，不能是文件；
+        // StandardWatchEventKinds.ENTRY_MODIFY，表示监视文件的新创建事件
+        directory.toPath().register(watcher, StandardWatchEventKinds.ENTRY_CREATE);
+
+        // 创建一个线程，等待目录下的文件发生变化
+        try {
+            while (true) {
+                // 获取目录的变化:
+                // take()是一个阻塞方法，会等待监视器发出的信号才返回。
+                // 还可以使用watcher.poll()方法，非阻塞方法，会立即返回当时监视器中是否有信号。
+                // 返回结果WatchKey，是一个单例对象，与前面的register方法返回的实例是同一个；
+                WatchKey key = watcher.take();
+                // 处理文件变化事件：
+                // key.pollEvents()用于获取文件变化事件，只能获取一次，不能重复获取，类似队列的形式。
+                for (WatchEvent<?> event : key.pollEvents()) {
+                    // event.kind()：事件类型
+                    if (event.kind() == StandardWatchEventKinds.OVERFLOW) {
+                        //事件可能lost or discarded
+                        continue;
+                    }
+                    // 返回触发事件的文件或目录的路径（相对路径）
+                    Path fileName = (Path) event.context();
+                    System.out.println("文件创建: " + fileName);
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            /////////////// for study //////////
+                            Thread t=Thread.currentThread();
+                            long id= t.threadId();
+                            System.out.println("add file:"+id);
+                            //更新JavaFX的主线程的代码放在此处
+                            MenuItem m=new MenuItem(fileName.toString());
+                            m.setOnAction(event1);
+                            PlayListShowButton.getItems().add(m);
+                            playlist.add(fileName.toFile());
+                        }
+                    });;
+
+                }
+                // 每次调用WatchService的take()或poll()方法时需要通过本方法重置
+                if (!key.reset()) {
+                    break;
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Thread listenDir = new Thread(() -> {
+        try {
+            AddListenerForMusic();
+        } catch (IOException ex) {
+            throw new RuntimeException(ex);
+        }
+    });
+
+
+
+
 
     public void RewindMethod(ActionEvent actionEvent) {
         double pos;
@@ -315,6 +399,8 @@ public class MediaController implements Initializable {
         time=new Timer();
         task=new TimerTask() {
             public void run() {
+                Thread t=currentThread();
+                System.out.println(t.threadId()+":task");
                 double pos;
                 if (isMidi){
                     pos= midiPlayer.getMidiPositon();

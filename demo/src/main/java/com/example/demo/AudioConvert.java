@@ -237,8 +237,7 @@ public class AudioConvert {
     }
 
 
-
-    public static void main(String[] args) throws EncoderException, IOException {
+    public static void main(String[] args) throws EncoderException, IOException, InterruptedException {
 
 
     }
