@@ -1,5 +1,6 @@
 package com.example.demo;
 
+import javafx.scene.control.Alert;
 import ws.schild.jave.*;
 
 import javax.swing.*;
@@ -8,7 +9,7 @@ import java.io.IOException;
 
 public class AudioConvert {
 
-    public static void ToWav() throws EncoderException {
+    public static int ToWav() throws EncoderException {
         File source,target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
@@ -33,14 +34,18 @@ public class AudioConvert {
                     encoder.encode(new MultimediaObject(source), target, attrs);
                 }catch (Exception ex) {
                     ex.printStackTrace();
+                    return -1;
                 }
                 System.out.println("Done");
+                return 0;
             }else {
                 System.out.println("输入文件格式错误，请检查格式是否支持");
+                return -1;
             }
 
         } else {
             System.out.println("无法获取权限");
+            return -1;
         }
 
     }
@@ -225,7 +230,7 @@ public class AudioConvert {
                 }catch (Exception ex) {
                     ex.printStackTrace();
                 }
-                System.out.println("Done");;
+                System.out.println("Done");
             }else {
                 System.out.println("输入文件格式错误，请检查格式是否支持");
             }

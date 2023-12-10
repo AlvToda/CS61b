@@ -120,7 +120,20 @@ public class MediaController implements Initializable {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    AudioConvert.ToWav();
+                    int res=AudioConvert.ToWav();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Information Dialog");
+                                //alert.setHeaderText("Look, an Information Dialog");
+                                alert.setContentText("转换完毕!（WAV）");
+                                alert.showAndWait();
+                            }
+                        });
+                    }
                 } catch (EncoderException ex) {
                     throw new RuntimeException(ex);
                 }
