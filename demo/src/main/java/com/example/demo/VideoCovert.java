@@ -309,12 +309,10 @@ public class VideoCovert {
 
                 System.out.println("Converting \"" + source.getName() + "\" to \"" + target.getName() + "\"...");
                 try {
-                    //生成带有 MPEG 4/DivX 视频和 OGG Vorbis 音频的 AVI：
+                    //生成带有h264视频和mp3音频的MP4文件：
                     AudioAttributes audio = new AudioAttributes();
-                    audio.setCodec("aac");// 设置音频编解码器为 libvorbis
-                    System.out.println("audio");
+                    audio.setCodec("mp3");// 设置音频编解码器为mp3
                     VideoAttributes video = new VideoAttributes();
-                    //video.setCodec("dvix");
                     video.setCodec("h264");
                     System.out.println("video");
                     video.setBitRate(1280000);//设置比特率为1280 kb / s

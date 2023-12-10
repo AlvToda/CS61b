@@ -350,10 +350,6 @@ public class MediaController implements Initializable {
         }
     });
 
-
-
-
-
     public void RewindMethod(ActionEvent actionEvent) {
         double pos;
         if(isMidi){
