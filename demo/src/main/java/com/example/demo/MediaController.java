@@ -21,6 +21,7 @@ import javafx.util.Duration;
 import uk.co.caprica.vlcj.component.AudioMediaPlayerComponent;
 import uk.co.caprica.vlcj.player.MediaPlayerFactory;
 import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import ws.schild.jave.EncoderException;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
@@ -95,6 +96,7 @@ public class MediaController implements Initializable {
             }else {
                 //改变了曲目之后要改变isMIDI，不然getPostion出问题
                 isMidi=false;
+                System.out.println(playlist.get(NumberOfSongs).getAbsolutePath());
                 MyPlayer.startMedia(playlist.get(NumberOfSongs).getAbsolutePath());
             }
             isRunning=true;
@@ -107,6 +109,96 @@ public class MediaController implements Initializable {
     };
     private boolean isMidi;
     private MIDIPlayer midiPlayer;
+
+    /******格式转换*************/
+    private static ArrayList<String> AudioConvMenu;
+    private ArrayList<EventHandler<ActionEvent>> AudioConvType;
+    //转WAV","转MP3","转AIFF","转AC3","转AU","转AMR"
+    private EventHandler<ActionEvent> ToWAV = new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e)
+        {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    AudioConvert.ToWav();
+                } catch (EncoderException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+        }
+    };
+    private EventHandler<ActionEvent> ToMP3 = new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e)
+        {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    AudioConvert.ToMP3();
+                } catch (EncoderException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+        }
+    };
+    private EventHandler<ActionEvent> ToAiff = new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e)
+        {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    AudioConvert.ToAiff();
+                } catch (EncoderException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+        }
+    };
+    private EventHandler<ActionEvent> ToAc3 = new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e)
+        {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    AudioConvert.ToAc3();
+                } catch (EncoderException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+        }
+    };
+    private EventHandler<ActionEvent> ToAU = new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e)
+        {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    AudioConvert.ToAU();
+                } catch (EncoderException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+        }
+    };
+    private EventHandler<ActionEvent> ToAMR = new EventHandler<ActionEvent>() {
+        public void handle(ActionEvent e)
+        {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
+                    AudioConvert.ToAMR();
+                } catch (EncoderException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+        }
+    };
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // TODO :for study
@@ -124,8 +216,20 @@ public class MediaController implements Initializable {
         rt.setInterpolator(Interpolator.LINEAR);  // 控制每个过渡周期的加速和减速时间，设置为匀速
 
         ProgressBar.setStyle("-fx-accent:#2e4565;");
-
-
+        /******格式转换*************/
+        AudioConvMenu=new ArrayList<>(Arrays.asList("转WAV","转MP3","转AIFF","转AC3","转AU","转AMR"));
+        AudioConvType=new ArrayList<>();
+        AudioConvType.add(ToWAV);
+        AudioConvType.add(ToMP3);
+        AudioConvType.add(ToAiff);
+        AudioConvType.add(ToAc3);
+        AudioConvType.add(ToAU);
+        AudioConvType.add(ToAMR);
+        for(int i=0;i<AudioConvMenu.size();i++){
+            MenuItem m=new MenuItem(AudioConvMenu.get(i));
+            m.setOnAction(AudioConvType.get(i));
+            AudioConvertButton.getItems().add(m);
+        }
         playlist=new ArrayList<File>();
         directory=new File( "music");
         isRunning=false;
@@ -170,7 +274,7 @@ public class MediaController implements Initializable {
             //MyPlayer.startMedia(path);
             //VolumeController.setValue(0.5);
         }
-        listenDir.start();
+        //listenDir.start();
     }
 
     public void ChangePlayList() {
@@ -222,6 +326,7 @@ public class MediaController implements Initializable {
                             m.setOnAction(event1);
                             PlayListShowButton.getItems().add(m);
                             playlist.add(fileName.toFile());
+                            System.out.println(playlist);
                         }
                     });;
 
@@ -238,6 +343,7 @@ public class MediaController implements Initializable {
 
     public Thread listenDir = new Thread(() -> {
         try {
+            System.out.println("ListenDir:"+Thread.currentThread().threadId());
             AddListenerForMusic();
         } catch (IOException ex) {
             throw new RuntimeException(ex);

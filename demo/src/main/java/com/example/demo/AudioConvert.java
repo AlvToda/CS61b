@@ -8,7 +8,7 @@ import java.io.IOException;
 
 public class AudioConvert {
 
-    public static void FlacToWav() throws EncoderException {
+    public static void ToWav() throws EncoderException {
         File source,target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
@@ -46,7 +46,7 @@ public class AudioConvert {
     }
 
 
-    public static void FlacToMP3() throws EncoderException {
+    public static void ToMP3() throws EncoderException {
         File source,target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
@@ -85,7 +85,7 @@ public class AudioConvert {
 
     }
 
-    public static void FlacToAiff() throws EncoderException {
+    public static void ToAiff() throws EncoderException {
         File source,target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
         int v = chooser.showOpenDialog(null);
@@ -158,7 +158,7 @@ public class AudioConvert {
             System.out.println("无法获取权限");
         }
     }
-    public void ToAU(){
+    public static void ToAU() throws EncoderException {
         //不支持midi转au,支持flac和mp3（目前）
         File source,target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
@@ -193,7 +193,7 @@ public class AudioConvert {
             System.out.println("无法获取权限");
         }
     }
-    public void ToAMR(){
+    public static void ToAMR() throws EncoderException {
         //不支持midi转au
         File source,target;
         JFileChooser chooser = new JFileChooser(System.getProperty("user.dir"));
