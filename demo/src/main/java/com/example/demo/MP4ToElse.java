@@ -132,10 +132,10 @@ public class MP4ToElse {
                 try {
                     //生成带有 MPEG 4/DivX 视频和 OGG Vorbis 音频的 AVI：
                     AudioAttributes audio = new AudioAttributes();
-                    audio.setCodec("libvorbis");// 设置音频编解码器为 libvorbis
+                    audio.setCodec("aac");// 设置音频编解码器为 libvorbis
                     System.out.println("audio");
                     VideoAttributes video = new VideoAttributes();
-                    video.setCodec("mjpeg");
+                    video.setCodec("mpeg4");
                     System.out.println("video");
                     video.setBitRate(1280000);//设置比特率为1280 kb / s
                     video.setFrameRate(30);
