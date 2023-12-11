@@ -242,6 +242,7 @@ public class TestVideo {
         rewindButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                //component.getMediaPlayer().setPosition(component.getMediaPlayer().getPosition()+0.025f);
                 component.getMediaPlayer().skip(-10000);
             }
         });
