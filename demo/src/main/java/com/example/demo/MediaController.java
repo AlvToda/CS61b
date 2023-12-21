@@ -129,7 +129,7 @@ public class MediaController implements Initializable {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Information Dialog");
                                 //alert.setHeaderText("Look, an Information Dialog");
-                                alert.setContentText("转换完毕!（WAV）");
+                                alert.setContentText("转换完毕!");
                                 alert.showAndWait();
                             }
                         });
@@ -299,69 +299,7 @@ public class MediaController implements Initializable {
             PlayListShowButton.getItems().add(m);
         }
     }
-    //文件夹变化监听
-    public void AddListenerForMusic() throws IOException {
-        // 创建WatchService，它是对操作系统的文件监视器的封装，相对之前，不需要遍历文件目录，效率要高很多
-        WatchService watcher = FileSystems.getDefault().newWatchService();
-        // 注册指定目录使用的监听器，监视目录下文件的变化；
-        // PS：Path必须是目录，不能是文件；
-        // StandardWatchEventKinds.ENTRY_MODIFY，表示监视文件的新创建事件
-        directory.toPath().register(watcher, StandardWatchEventKinds.ENTRY_CREATE);
 
-        // 创建一个线程，等待目录下的文件发生变化
-        try {
-            while (true) {
-                // 获取目录的变化:
-                // take()是一个阻塞方法，会等待监视器发出的信号才返回。
-                // 还可以使用watcher.poll()方法，非阻塞方法，会立即返回当时监视器中是否有信号。
-                // 返回结果WatchKey，是一个单例对象，与前面的register方法返回的实例是同一个；
-                WatchKey key = watcher.take();
-                // 处理文件变化事件：
-                // key.pollEvents()用于获取文件变化事件，只能获取一次，不能重复获取，类似队列的形式。
-                for (WatchEvent<?> event : key.pollEvents()) {
-                    // event.kind()：事件类型
-                    if (event.kind() == StandardWatchEventKinds.OVERFLOW) {
-                        //事件可能lost or discarded
-                        continue;
-                    }
-                    // 返回触发事件的文件或目录的路径（相对路径）
-                    Path fileName = (Path) event.context();
-                    System.out.println("文件创建: " + fileName);
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            /////////////// for study //////////
-                            Thread t=Thread.currentThread();
-                            long id= t.threadId();
-                            System.out.println("add file:"+id);
-                            //更新JavaFX的主线程的代码放在此处
-                            MenuItem m=new MenuItem(fileName.toString());
-                            m.setOnAction(event1);
-                            PlayListShowButton.getItems().add(m);
-                            playlist.add(fileName.toFile());
-                            System.out.println(playlist);
-                        }
-                    });;
-
-                }
-                // 每次调用WatchService的take()或poll()方法时需要通过本方法重置
-                if (!key.reset()) {
-                    break;
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public Thread listenDir = new Thread(() -> {
-        try {
-            System.out.println("ListenDir:"+Thread.currentThread().threadId());
-            AddListenerForMusic();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    });
 
     public void RewindMethod(ActionEvent actionEvent) {
         double pos;
@@ -391,12 +329,7 @@ public class MediaController implements Initializable {
         long id= t.threadId();
         System.out.println("play:"+id);
         if(!isRunning) {
-            /*String path = playlist.get(NumberOfSongs).toURI().getPath();
-            path = path.substring(1);
-            path = path.replace("/", "\\");*/
-            //System.out.println(path);
 
-            //MyPlayer.startMedia(path);
             isRunning=true;
             BeginTiming();
             //如果是midi文件则new 一个新的midiplayer对象，并调用方法播放
@@ -548,22 +481,22 @@ public class MediaController implements Initializable {
             MyPlayer.setPosition(0);
         }
         String path = playlist.get(NumberOfSongs).getAbsolutePath();
-        //System.out.println(path);
 
         MyPlayer.startMedia(path);
         isRunning=true;
         BeginTiming();
-        //MyPlayer.play();
-        //rt.play();  // 开始播放动画
+
     }
 
     public void SwitchToPlayVideo(ActionEvent actionEvent) throws IOException {
-        isRunning=false;
         rt.pause();
-        if(isMidi){
-            midiPlayer.midiPause();
-        }else{
-            MyPlayer.pause();
+        if(isRunning) {
+            if (isMidi) {
+                midiPlayer.midiPause();
+            } else {
+                MyPlayer.pause();
+            }
+            isRunning = false;
         }
          /*MyPlayer.stop();
          MyPlayer.setPosition(0);*/

@@ -130,7 +130,7 @@ public class TestVideo {
             @Override
             public void run() {
                 /*************初始化TFMenu和ListenersForTF ************/
-                TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV","MP4转AVI","MP4转ASF","MP4转FLV","MP4转DVD"));
+                TFMenu=new ArrayList<>(Arrays.asList("转MOV","转AVI","转ASF","转FLV","转DVD"));
                 ListenersForTF=new ArrayList<>();
                 ListenersForTF.add(l0);
                 ListenersForTF.add(l1);
