@@ -110,7 +110,7 @@ public class MediaController implements Initializable {
     private boolean isMidi;
     private MIDIPlayer midiPlayer;
 
-    /******格式转换*************/
+    /******格式转换有关的监听器以及相应的触发事件*************/
     private static ArrayList<String> AudioConvMenu;
     private ArrayList<EventHandler<ActionEvent>> AudioConvType;
     //转WAV","转MP3","转AIFF","转AC3","转AU","转AMR"
@@ -128,7 +128,6 @@ public class MediaController implements Initializable {
                             public void run() {
                                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
                                 alert.setTitle("Information Dialog");
-                                //alert.setHeaderText("Look, an Information Dialog");
                                 alert.setContentText("转换完毕!");
                                 alert.showAndWait();
                             }
@@ -147,7 +146,19 @@ public class MediaController implements Initializable {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    AudioConvert.ToMP3();
+                    int res=AudioConvert.ToMP3();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Information Dialog");
+                                alert.setContentText("转换完毕!");
+                                alert.showAndWait();
+                            }
+                        });
+                    }
                 } catch (EncoderException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -161,7 +172,19 @@ public class MediaController implements Initializable {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    AudioConvert.ToAiff();
+                    int res=AudioConvert.ToAiff();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Information Dialog");
+                                alert.setContentText("转换完毕!");
+                                alert.showAndWait();
+                            }
+                        });
+                    }
                 } catch (EncoderException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -175,7 +198,19 @@ public class MediaController implements Initializable {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    AudioConvert.ToAc3();
+                    int res=AudioConvert.ToAc3();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Information Dialog");
+                                alert.setContentText("转换完毕!");
+                                alert.showAndWait();
+                            }
+                        });
+                    }
                 } catch (EncoderException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -189,7 +224,19 @@ public class MediaController implements Initializable {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    AudioConvert.ToAU();
+                    int res=AudioConvert.ToAU();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Information Dialog");
+                                alert.setContentText("转换完毕!");
+                                alert.showAndWait();
+                            }
+                        });
+                    }
                 } catch (EncoderException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -203,7 +250,19 @@ public class MediaController implements Initializable {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    AudioConvert.ToAMR();
+                    int res=AudioConvert.ToAMR();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                                alert.setTitle("Information Dialog");
+                                alert.setContentText("转换完毕!");
+                                alert.showAndWait();
+                            }
+                        });
+                    }
                 } catch (EncoderException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -214,11 +273,6 @@ public class MediaController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // TODO :for study
-        /////////////// for study //////////
-        Thread t=Thread.currentThread();
-        long id= t.threadId();
-        System.out.println("init:"+id);
         // 创建一个旋转的过渡动画，构建方法中，第一个参数指定完成一次旋转所需要的时间，第二个参数是旋转的对象
         rt = new RotateTransition(Duration.seconds(7), PaneForCircle);
 
@@ -252,7 +306,6 @@ public class MediaController implements Initializable {
             for(File f:files){
                 playlist.add(f);
                 MenuItem m=new MenuItem(f.getName());
-                //SongMenu.add(m);
                 m.setOnAction(event1);
                 PlayListShowButton.getItems().add(m);
             }
@@ -277,17 +330,11 @@ public class MediaController implements Initializable {
             MyPlayer=mediaPlayerFactory.newEmbeddedMediaPlayer();
 
             MyPlayer.prepareMedia(path);
-            //System.out.println(MyPlayer.getLength());//需要startmedia才可以获取真正的length
-            //可以播放rtsp MyPlayer.startMedia("rtsp://127.0.0.1:8554/");
-            //MyPlayer.startMedia("http://127.0.0.1:8080/");
-            /*AudioMediaPlayerComponent a=new AudioMediaPlayerComponent();
-            a.getMediaPlayer().startMedia(path);*/
 
             NameLabel.setText(playlist.get(NumberOfSongs).getName());
-            //MyPlayer.startMedia(path);
-            //VolumeController.setValue(0.5);
+
         }
-        //listenDir.start();
+
     }
 
     public void ChangePlayList() {
@@ -498,13 +545,10 @@ public class MediaController implements Initializable {
             }
             isRunning = false;
         }
-         /*MyPlayer.stop();
-         MyPlayer.setPosition(0);*/
-        //MyPlayer.release();
 
         HelloApplication.CloseStage();
 
-        TestVideo.videoPlay(null);
+        TestVideo.videoPlay();
 
     }
 
@@ -539,10 +583,5 @@ public class MediaController implements Initializable {
             MyPlayer.setPosition((float)(mouseEvent.getX()/ProgressBar.getWidth()));
         }
     }
-    /**** volume control
-     public void ChangeVolume(MouseEvent mouseEvent) {
-     System.out.println(MyPlayer.getVolume());
-     MyPlayer.setVolume(200);
-     System.out.println(MyPlayer.getVolume());
-     }*************/
+
 }

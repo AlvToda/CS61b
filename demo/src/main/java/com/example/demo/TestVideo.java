@@ -2,8 +2,9 @@ package com.example.demo;
 
 
 import javafx.application.Platform;
-import uk.co.caprica.vlcj.player.embedded.EmbeddedMediaPlayer;
+import javafx.scene.control.Alert;
 import uk.co.caprica.vlcj.component.EmbeddedMediaPlayerComponent;
+import ws.schild.jave.EncoderException;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -11,12 +12,11 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import javax.swing.*;
 
 public class TestVideo {
-    private final JFrame jframe;
+    private static  JFrame jframe;
 
     private static final EmbeddedMediaPlayerComponent component = new EmbeddedMediaPlayerComponent();
 
@@ -44,7 +44,14 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_mov();
+                    //JOptionPane.showMessageDialog(null, "提示消息.", "转换完毕",JOptionPane.PLAIN_MESSAGE);
+
+                    int res=VideoCovert.To_mov();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        JOptionPane.showMessageDialog(null, "转换完毕.", "提示消息",JOptionPane.PLAIN_MESSAGE);
+                    }
+
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -61,7 +68,12 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_avi();
+                    int res=VideoCovert.To_avi();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        JOptionPane.showMessageDialog(null, "转换完毕.", "提示消息",JOptionPane.PLAIN_MESSAGE);
+                    }
+
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -77,7 +89,12 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_asf();
+                    int res=VideoCovert.To_asf();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        JOptionPane.showMessageDialog(null, "转换完毕.", "提示消息",JOptionPane.PLAIN_MESSAGE);
+                    }
+
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -93,7 +110,13 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_flv();
+
+                    int res=VideoCovert.To_flv();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        JOptionPane.showMessageDialog(null, "转换完毕.", "提示消息",JOptionPane.PLAIN_MESSAGE);
+                    }
+
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -109,7 +132,13 @@ public class TestVideo {
             // 使用Lambda表达式创建一个新线程
             Thread conversionThread = new Thread(() -> {
                 try {
-                    MP4ToElse.mp4_to_dvd();
+
+                    int res=VideoCovert.To_dvd();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        JOptionPane.showMessageDialog(null, "转换完毕.", "提示消息",JOptionPane.PLAIN_MESSAGE);
+                    }
+
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
                 }
@@ -118,36 +147,75 @@ public class TestVideo {
 
         }
     };
-        /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
+    static ActionListener l5= new ActionListener() {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            // 使用Lambda表达式创建一个新线程
+            Thread conversionThread = new Thread(() -> {
+                try {
 
-    public static void videoPlay(String[] args) {
+                    int res=VideoCovert.toMP4();
+                    //转换成功则弹窗提示
+                    if(res==0){
+                        JOptionPane.showMessageDialog(null, "转换完毕.", "提示消息",JOptionPane.PLAIN_MESSAGE);
+                    }
+
+
+                } catch (EncoderException ex) {
+                    throw new RuntimeException(ex);
+                }
+            });
+            conversionThread.start();
+
+        }
+    };
+        /********* 此区域对应不同格式转换对应的不同侦听器以及不同的具体行为**********/
+    private static boolean isinitialized=false;
+    public static void videoPlay() {
         // TODO: test
         /////////////// for study //////////
         Thread t=Thread.currentThread();
         long id= t.threadId();
         System.out.println("videoPlay:"+id);
+         TFMenu=new ArrayList<>(Arrays.asList("转MOV","转AVI","转ASF","转FLV","转DVD","转MP4"));
+         ListenersForTF=new ArrayList<>();
+         ListenersForTF.add(l0);
+         ListenersForTF.add(l1);
+         ListenersForTF.add(l2);
+         ListenersForTF.add(l3);
+         ListenersForTF.add(l4);
+         ListenersForTF.add(l5);
+         //isinitialized为假，说明窗口还没有被建立起来
+         if(!isinitialized){
+             new TestVideo();
+             isinitialized=true;
+         }else{
+             //isinitialized为真，此时只需要将jframe设置为true就可以继续上一次播放的视频为止
+             jframe.setVisible(true);
+         }
+        /**
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
+
                 /*************初始化TFMenu和ListenersForTF ************/
                 TFMenu=new ArrayList<>(Arrays.asList("转MOV","转AVI","转ASF","转FLV","转DVD"));
+                /*************初始化TFMenu和ListenersForTF ***********
+                TFMenu=new ArrayList<>(Arrays.asList("MP4转MOV","MP4转AVI","MP4转ASF","MP4转FLV","MP4转DVD"));
                 ListenersForTF=new ArrayList<>();
                 ListenersForTF.add(l0);
                 ListenersForTF.add(l1);
                 ListenersForTF.add(l2);
                 ListenersForTF.add(l3);
                 ListenersForTF.add(l4);
-                new TestVideo(args);
+                new TestVideo();
             }
-        });
+        });*/
 
     }
-    public TestVideo(String[] args){
+    public TestVideo(){
         //component=new EmbeddedMediaPlayerComponent();
         /////////////// for study //////////
-        Thread t=Thread.currentThread();
-        long id= t.threadId();
-        System.out.println("TestVideo:"+id);
         //界面的显示
         jframe=new JFrame("Mul-player");
 
@@ -281,6 +349,8 @@ public class TestVideo {
         selectFilesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                Thread t=Thread.currentThread();
+                System.out.println(t.threadId()+":select actionPerformed");
                 JFileChooser chooser=new JFileChooser(System.getProperty("user.dir"));
                 int v=chooser.showOpenDialog(null);
                 if(v==JFileChooser.APPROVE_OPTION){
@@ -293,9 +363,12 @@ public class TestVideo {
         MusicPlayerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                 component.getMediaPlayer().stop();
+                 Thread t=Thread.currentThread();
+                 System.out.println(t.threadId()+":switch actionPerformed");
+                 component.getMediaPlayer().pause();
                  jframe.setVisible(false);
                  //component.release();
+
                  SwitchLater();
             }
         });
