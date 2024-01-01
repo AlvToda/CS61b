@@ -126,18 +126,37 @@ public class RSAUtils {
         System.out.println("d:"+k.d.toString(16));
         System.out.println("n:"+k.n.toString(16));
         /*test*/
-        System.out.println(text.toString(10));
+        System.out.println(text.toString(16));
         BigInteger ciphertext=encrypt(text,k.getPublicKey());
-        System.out.println(ciphertext.toString(10));
+        System.out.println(ciphertext.toString(16));
         //验证结果是否准确
-        System.out.println(decrypt(ciphertext,k.getPrivateKey()).toString(10));
+        System.out.println(decrypt(ciphertext,k.getPrivateKey()).toString(16));
     }
     //解密
     public static void RSA_decrypt(BigInteger ciphertext) {
         System.out.println(decrypt(ciphertext,k.getPrivateKey()).toString(10));
     }
-    public static void main(String[] args) {
-       RSA_encrypt(new BigInteger("12143286148264812361846183648618461"));
 
+    public static BigInteger RSA_signature(BigInteger hash,Keys.PrivateKey privateKey){
+        return En_De_Mod(hash, privateKey.d, privateKey.n);
+    }
+
+    public static boolean RSA_verify(BigInteger sig,Keys.PublicKey publicKey,BigInteger hash_v){
+        BigInteger digest= En_De_Mod(sig, publicKey.e, publicKey.n);
+        return digest.equals(hash_v);
+    }
+
+    public static void main(String[] args) {
+        long timeStart = System.currentTimeMillis();
+        RSA_encrypt(new BigInteger("ca34e863d783bf1d9ee0771a8a8bb55bf9237fc1f2e65214de897a7d8d3b8f01d8",16));
+        long timeEnd = System.currentTimeMillis();
+        System.out.println("加密用时：" + (timeEnd - timeStart)+"ms");
+        //验签
+        BigInteger s=RSA_signature(new BigInteger("fe8025e661f6964219393aecb2921e194adf0fd39447940f53de339674366e813f18053f82209418bcbe42313b6abc9978de0b4a" +
+                "b17dd602187772eada3949f1",16),k.getPrivateKey());
+        String p3="ALINUGF";
+
+        String r3=HashUtils.getSha(p3);
+        System.out.println(RSA_verify(s,k.getPublicKey(),new BigInteger(r3,16)));
     }
 }

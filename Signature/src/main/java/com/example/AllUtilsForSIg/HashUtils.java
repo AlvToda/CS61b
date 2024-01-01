@@ -21,7 +21,7 @@ public class HashUtils {
         return builder.toString();
     }
 
-    private static String getSha(String plainText) {
+    public static String getSha(String plainText) {
         //输入的字符串转换成字节数组
         byte[] bytes = plainText.getBytes(StandardCharsets.UTF_8);
         MessageDigest messageDigest;

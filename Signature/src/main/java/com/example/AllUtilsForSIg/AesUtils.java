@@ -3,6 +3,7 @@ import java.nio.charset.Charset;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
+import java.util.Arrays;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -13,13 +14,14 @@ import javax.crypto.SecretKey;
 
 public class AesUtils {
 
-    static final String ALGORITHM = "AES";
+    //static final String ALGORITHM = "AES";
 
     public static SecretKey generateKey() throws NoSuchAlgorithmException { // 生成密钥
-        KeyGenerator secretGenerator = KeyGenerator.getInstance(ALGORITHM);
+        KeyGenerator secretGenerator = KeyGenerator.getInstance("AES");
         SecureRandom secureRandom = new SecureRandom();
         secretGenerator.init(secureRandom);
         SecretKey secretKey = secretGenerator.generateKey();
+        System.out.println(Arrays.toString(secretKey.getEncoded()));
         return secretKey;
     }
 
@@ -35,14 +37,14 @@ public class AesUtils {
 
     private static byte[] aes(byte[] contentArray, int mode, SecretKey secretKey)
             throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        Cipher cipher = Cipher.getInstance(ALGORITHM);
+        Cipher cipher = Cipher.getInstance("AES");
         cipher.init(mode, secretKey);
         byte[] result = cipher.doFinal(contentArray);
         return result;
     }
 
     public static void main(String[] args) {
-        String content = "你好,我很喜欢加密算法";
+        String content = "AES算法测试文本";
         SecretKey secretKey;
         try {
             long timeStart = System.currentTimeMillis();
