@@ -41,8 +41,10 @@ public class ULLMap<K, V>  implements Map61B<K, V> {
      * replacing the previous value associated to KEY, if any.
      */
     public void put(K key, V val) {
+        //如果
         if (list != null) {
             Entry lookup = list.get(key);
+            //没有找到key
             if (lookup == null) {
                 list = new Entry(key, val, list);
                 size = size + 1;
